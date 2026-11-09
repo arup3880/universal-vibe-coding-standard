@@ -21,8 +21,8 @@ Thank you for your interest in contributing to the **Universal Vibe Coding Stand
 
 1. **Fork & Clone**:
    ```bash
-   git clone https://github.com/<your-username>/vibe-coding-standard.git
-   cd vibe-coding-standard
+   git clone https://github.com/arup3880/universal-vibe-coding-standard.git
+   cd universal-vibe-coding-standard
    ```
 2. **Create a Feature Branch**:
    ```bash

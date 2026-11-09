@@ -1,4 +1,4 @@
-# Universal Vibe Coding Standard (`vibe-coding-standard`)
+# Universal Vibe Coding Standard (`universal-vibe-coding-standard`)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Antigravity Plugin](https://img.shields.io/badge/Antigravity-Plugin-brightgreen.svg)](plugin.json)
