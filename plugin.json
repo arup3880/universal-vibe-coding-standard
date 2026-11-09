@@ -1,0 +1,9 @@
+{
+  "name": "vibe-coding-standard",
+  "version": "1.3.0",
+  "description": "Enterprise living documentation, multi-conversation knowledge base synchronization, dual Antigravity & Claude compatibility, and Magic UI modern frontend standards for AI pair programming.",
+  "author": {
+    "name": "Antigravity, Claude & Developer"
+  },
+  "license": "MIT"
+}

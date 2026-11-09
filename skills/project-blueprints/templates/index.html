@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{PROJECT_NAME}} Living Blueprint & Knowledge Base Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #10b981;
+      --tag-bg: #0369a1;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .title-group h1 { font-size: 1.4rem; display: flex; align-items: center; gap: 0.5rem; }
+    .badge { background: var(--tag-bg); color: #fff; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 9999px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+    .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+    
+    .nav-tabs { display: flex; background: #162032; border-bottom: 1px solid var(--border); padding: 0 2rem; overflow-x: auto; }
+    .tab-btn { background: none; border: none; color: var(--text-muted); padding: 0.85rem 1.25rem; font-size: 0.95rem; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+    main { flex: 1; padding: 2rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease-in; }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .card h2 { font-size: 1.15rem; color: var(--primary); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; background: #131c2e; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .diagram-card, .mermaid { background: #0b1120; padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; text-align: center; border: 1px solid var(--border); min-height: 120px; display: flex; align-items: center; justify-content: center; }
+    .diagram-card svg, .mermaid svg { max-width: 100%; height: auto; }
+    .loading-spinner { color: var(--text-muted); font-size: 0.9rem; font-style: italic; }
+    .render-error { color: var(--danger); background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); padding: 1rem; border-radius: 0.5rem; font-size: 0.9rem; text-align: left; width: 100%; }
+    
+    .doc-link { display: inline-block; font-size: 0.8rem; color: var(--primary); text-decoration: none; border: 1px solid var(--primary); padding: 0.2rem 0.5rem; border-radius: 4px; margin-left: 0.5rem; }
+    .doc-link:hover { background: var(--primary); color: #fff; }
+
+    .badge-subtle { display: inline-block; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 500; }
+    .badge-active { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-group">
+      <h1>Project Living Blueprint <span class="badge">Universal v6</span></h1>
+      <div class="subtitle">Unified Product Specifications, Architecture & Living Knowledge Dashboard</div>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <a class="doc-link" href="TRACKER.md">Tracker.md</a>
+      <a class="doc-link" href="RULES.md">Rules.md</a>
+      <a class="doc-link" href="MEMORY.md">Memory.md</a>
+      <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">Standard: <b>Universal 2026</b></span>
+    </div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('prd', this)">1. Overview & PRD</button>
+    <button class="tab-btn" onclick="switchTab('erd', this)">2. Data & State Models</button>
+    <button class="tab-btn" onclick="switchTab('architecture', this)">3. Architecture & Pipeline</button>
+    <button class="tab-btn" onclick="switchTab('design', this)">4. Design & UI Specs</button>
+    <button class="tab-btn" onclick="switchTab('ecosystem', this)">5. Ecosystem & APIs</button>
+    <button class="tab-btn" onclick="switchTab('knowledge', this)">6. Knowledge Base & Memory</button>
+    <button class="tab-btn" onclick="switchTab('tracker', this)">7. Tracker & Runbook</button>
+  </nav>
+
+  <main>
+    <!-- TAB 1: OVERVIEW & PRD -->
+    <div id="tab-prd" class="tab-content active">
+      <div class="card">
+        <h2>
+          <span>Product Requirements Specification (PRD)</span>
+          <div>
+            <a class="doc-link" href="PRD.md">Open PRD.md</a>
+          </div>
+        </h2>
+        <p style="color: var(--text-muted); line-height: 1.6;">
+          Defines the core problem, user personas, MoSCoW feature scope, input/output contracts, and verifiable non-functional budgets. Consult <code>docs/PRD.md</code> for complete details.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>System Execution Pipeline & Responsibilities</h2>
+        <table>
+          <thead>
+            <tr><th>Component / Actor</th><th>Input Data</th><th>Core Processing</th><th>Output / Artifact</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Ingestion / Inward</b></td><td>Source data, feeds, or configurations</td><td>Parsing, validation, sanitization</td><td>Normalized data objects</td></tr>
+            <tr><td><b>Core Engine</b></td><td>Normalized data</td><td>Algorithms, strategies, rendering, execution</td><td>Processed results / signals</td></tr>
+            <tr><td><b>Storage / Export</b></td><td>Processed results</td><td>Persistence, caching, rendering</td><td>Persisted state, artifacts, outputs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: ERD / STATE MODEL -->
+    <div id="tab-erd" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>Data Model & State Architecture</span>
+          <a class="doc-link" href="ERD.md">Open ERD.md</a>
+        </h2>
+        <div id="diagram-erd" class="diagram-card">
+          <div class="loading-spinner">Loading Data & State Models...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ARCHITECTURE / PIPELINE -->
+    <div id="tab-architecture" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>Component Architecture & Data Flow</span>
+          <a class="doc-link" href="ARCHITECTURE.md">Open ARCHITECTURE.md</a>
+        </h2>
+        <div id="diagram-arch" class="diagram-card">
+          <div class="loading-spinner">Loading Component Architecture...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: DESIGN & UI/UX SPECS -->
+    <div id="tab-design" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>System & Interface Design Specifications</span>
+          <a class="doc-link" href="DESIGN.md">Open DESIGN.md</a>
+        </h2>
+        <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem;">
+          Enforces 2026 design standards, tactical design patterns, UI/UX tokens, and Architectural Decision Records (ADRs).
+        </p>
+        <table>
+          <thead>
+            <tr><th>Design Domain</th><th>Specification Standard</th><th>Key Invariants</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>UI Design Tokens</b></td><td>Crisp 1px borders, 4px grid, 3-tier radius scale</td><td>Tabular numerals (<code>tabular-nums</code>), dark surface hierarchy</td></tr>
+            <tr><td><b>Interactive Contracts</b></td><td>5-State interactive component contract</td><td>Default, Hover, Active/Focus, Disabled, Loading/Skeleton</td></tr>
+            <tr><td><b>API Design</b></td><td>Contract-first schema (OpenAPI 3.1 / JSON Schema)</td><td>Atomic transactions, idempotency keys, sanitized DTOs</td></tr>
+            <tr><td><b>Decision Log</b></td><td>MADR / ADR record history</td><td>Documented rationale, alternatives considered, accepted status</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 5: ECOSYSTEM -->
+    <div id="tab-ecosystem" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>External Ecosystem & Connected Services</span>
+          <a class="doc-link" href="ECOSYSTEM.md">Open ECOSYSTEM.md</a>
+        </h2>
+        <div id="diagram-eco" class="diagram-card">
+          <div class="loading-spinner">Loading Ecosystem Architecture...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: KNOWLEDGE BASE & MEMORY -->
+    <div id="tab-knowledge" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>Multi-Conversation Central Knowledge Base</span>
+          <div>
+            <a class="doc-link" href="KNOWLEDGE_BASE.md">Open KNOWLEDGE_BASE.md</a>
+            <a class="doc-link" href="MEMORY.md">Open MEMORY.md</a>
+          </div>
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+          Maintained continuously across all conversations in Antigravity to guarantee zero architectural drift and persistent memory.
+        </p>
+        <table>
+          <thead>
+            <tr><th>Subsystem / Module</th><th>Responsibility</th><th>Configuration Source</th><th>State</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>Core Processing</b></td><td>Primary business logic / execution loop</td><td><code>.env / config.json</code></td><td><span class="badge-subtle badge-active">Active</span></td></tr>
+            <tr><td><b>Data Adapters</b></td><td>External connectors / stream ingest</td><td><code>settings / env</code></td><td><span class="badge-subtle badge-active">Active</span></td></tr>
+            <tr><td><b>Output Handlers</b></td><td>State persistence & artifact export</td><td><code>runtime options</code></td><td><span class="badge-subtle badge-active">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 7: TRACKER & RUNBOOK -->
+    <div id="tab-tracker" class="tab-content">
+      <div class="card">
+        <h2>
+          <span>Roadmap, Task Backlog & Milestone History</span>
+          <a class="doc-link" href="TRACKER.md">Open TRACKER.md</a>
+        </h2>
+        <p style="color: var(--text-muted);">
+          Active tasks, MoSCoW priorities, and historical milestone logs are unified in <code>docs/TRACKER.md</code>.
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>
+          <span>Troubleshooting Runbook</span>
+          <a class="doc-link" href="TROUBLESHOOTING.md">Open TROUBLESHOOTING.md</a>
+        </h2>
+        <p style="color: var(--text-muted);">
+          Environment gotchas, dependency mismatches, and fix recipes are recorded in <code>docs/TROUBLESHOOTING.md</code>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <!-- RAW MERMAID DIAGRAM SOURCES (Protected from DOM Whitespace & Hidden Container Sizing Bugs) -->
+  <script type="text/plain" id="diagram-erd-src">
+erDiagram
+    CONFIG ||--o{ RUNTIME_EXECUTION : configures
+    RUNTIME_EXECUTION ||--o{ LOG_ENTRIES : produces
+
+    CONFIG {
+        string config_id PK
+        string environment
+        string settings_hash
+        datetime created_at
+    }
+    RUNTIME_EXECUTION {
+        string execution_id PK
+        string status "pending, running, completed, failed"
+        datetime started_at
+        datetime completed_at
+    }
+    LOG_ENTRIES {
+        int id PK
+        string execution_id FK
+        string level "INFO, WARN, ERROR"
+        string message
+        datetime timestamp
+    }
+  </script>
+
+  <script type="text/plain" id="diagram-arch-src">
+flowchart LR
+    Inputs["Source Data / Inputs / Config"] --> Engine["Core Engine / Processing"]
+    Engine --> Pipeline["Worker Pipeline / Subsystems"]
+    Pipeline --> Storage["State / Datastore / Cache"]
+    Pipeline --> Outputs["Generated Artifacts / Actions"]
+  </script>
+
+  <script type="text/plain" id="diagram-eco-src">
+graph TD
+    ThisApp["Current System (THIS PROJECT)"]
+    ExternalAPIs["External APIs / Cloud Services / Exchanges"]
+    SharedStorage[("Local / Cloud Data Store")]
+
+    ThisApp --> ExternalAPIs
+    ThisApp --> SharedStorage
+  </script>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'loose'
+    });
+
+    const renderedDiagrams = new Set();
+
+    async function renderTabDiagrams(tabId) {
+      const container = document.getElementById('tab-' + tabId);
+      if (!container) return;
+
+      // 1. Render dedicated diagram cards with script sources
+      const cards = container.querySelectorAll('.diagram-card');
+      for (const card of cards) {
+        const id = card.id;
+        if (renderedDiagrams.has(id)) continue;
+        const srcEl = document.getElementById(id + '-src');
+        if (!srcEl) continue;
+        const rawCode = srcEl.textContent.trim();
+        try {
+          const { svg } = await mermaid.render('svg-' + id, rawCode);
+          card.innerHTML = svg;
+          renderedDiagrams.add(id);
+        } catch (err) {
+          console.error('Failed to render ' + id, err);
+          card.innerHTML = '<div class="render-error"><b>Diagram Render Error:</b> ' + err.message + '</div>';
+        }
+      }
+
+      // 2. Also render any direct .mermaid containers in this tab (fallback support)
+      const mermaidNodes = container.querySelectorAll('.mermaid:not([data-processed="true"])');
+      for (const node of mermaidNodes) {
+        try {
+          await mermaid.run({ nodes: [node] });
+        } catch (err) {
+          console.error('Failed to render .mermaid element', err);
+        }
+      }
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tabId);
+      if (targetTab) {
+        targetTab.classList.add('active');
+      }
+
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matchingBtn = document.querySelector(`[onclick*="${tabId}"]`);
+        if (matchingBtn) matchingBtn.classList.add('active');
+      }
+
+      renderTabDiagrams(tabId);
+      window.dispatchEvent(new Event('resize'));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTabDiagrams('prd');
+    });
+  </script>
+</body>
+</html>

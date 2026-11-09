@@ -1,0 +1,32 @@
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+*.swp
+*~
+
+# Temporary & Log files
+*.log
+*.tmp
+*.bak
+
+# Environment & Local secrets
+.env
+.env.local
+.env.*.local
+
+# Node & Package caches
+node_modules/
+package-lock.json
+.pnpm-debug.log*
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
